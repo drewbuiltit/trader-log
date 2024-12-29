@@ -1,91 +1,97 @@
 import React, { useState } from 'react'
-import axios from 'axios'
+import DynamicToggle from './DynamicToggle.tsx'
 
-const TradeForm: React.FC = () => {
-  const [formData, setFormData] = useState({
-    symbol: '',
-    trade_date: '',
-    buy_sell: 'Buy',
-    entry_exit_price: '',
-    quantity: '',
-    fees: '',
-    comments: ''
-  })
+interface TradeFormProps {
+  initialData?: Trade;
+  onSubmit: (data: Trade) => void;
+}
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+interface Trade {
+  symbol: string;
+  tradeDate: string;
+  type: 'Buy' | 'Sell';
+  quantity: number;
+  price: number;
+}
+
+const TradeForm: React.FC<TradeFormProps> = ({ initialData, onSubmit }) => {
+  const [trade, setTrade] = useState<Trade>(
+    initialData || {
+      symbol: '',
+      tradeDate: '',
+      type: 'Buy',
+      quantity: '',
+      price: ''
+    }
+  )
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target
-    setFormData({ ...formData, [name]: value })
+    setTrade({ ...trade, [name]: value })
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    try {
-      await axios.post('http://localhost:8000/trades/', formData)
-      alert('Trade added successfully!')
-    } catch (error) {
-      console.error('Error adding trade:', error)
-    }
+    onSubmit(trade)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4 space-y-4 bg-white shadow-md rounded">
-      <input
-        name="symbol"
-        type="text"
-        placeholder="Symbol"
-        value={formData.symbol}
-        onChange={handleChange}
-        className="w-full p-2 border"
-      />
-      <input
-        name="trade_date"
-        type="date"
-        value={formData.trade_date}
-        onChange={handleChange}
-        className="w-full p-2 border"
-      />
-      <select
-        name="buy_sell"
-        value={formData.buy_sell}
-        onChange={handleChange}
-        className="w-full p-2 border"
-      >
-        <option value="Buy">Buy</option>
-        <option value="Sell">Sell</option>
-      </select>
-      <input
-        name="entry_exit_price"
-        type="number"
-        placeholder="Entry/Exit Price"
-        value={formData.entry_exit_price}
-        onChange={handleChange}
-        className="w-full p-2 border"
-      />
-      <input
-        name="quantity"
-        type="number"
-        placeholder="Quantity"
-        value={formData.quantity}
-        onChange={handleChange}
-        className="w-full p-2 border"
-      />
-      <input
-        name="fees"
-        type="number"
-        placeholder="Fees"
-        value={formData.fees}
-        onChange={handleChange}
-        className="w-full p-2 border"
-      />
-      <textarea
-        name="comments"
-        placeholder="Comments"
-        value={formData.comments}
-        onChange={handleChange}
-        className="w-full p-2 border"
-      />
-      <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
-        Add Trade
+    <form onSubmit={handleSubmit} className="space-y-4 mx-auto w-1/2">
+      <label className="input input-bordered flex items-center gap-2">
+        Symbol
+        <input
+          type="text"
+          name="symbol"
+          placeholder="TSLA"
+          value={trade.symbol}
+          onChange={handleChange}
+          className="grow"
+        />
+      </label>
+      <label className="input input-bordered flex items-center gap-2">
+        Trade Date
+        <input
+          type="date"
+          name="tradeDate"
+          value={trade.tradeDate}
+          onChange={handleChange}
+          className="grow"
+        />
+      </label>
+      <div className="form-control">
+        <label className="label cursor-pointer">
+          <span className="label-text text-lg">Buy / Sell</span>
+          <DynamicToggle
+            name="type"
+            value={trade.type === 'Buy'}
+            onChange={handleChange}
+          />
+        </label>
+      </div>
+      <label className="input input-bordered flex items-center gap-2">
+        Quantity
+        <input
+          type="text"
+          name="quantity"
+          placeholder="100"
+          value={trade.quantity}
+          onChange={handleChange}
+          className="grow"
+        />
+      </label>
+      <label className="input input-bordered flex items-center gap-2">
+        Price
+        <input
+          type="text"
+          name="price"
+          placeholder="150.00"
+          value={trade.price}
+          onChange={handleChange}
+          className="grow"
+        />
+      </label>
+      <button type="submit" className="btn btn-neutral btn-block">
+        Submit
       </button>
     </form>
   )

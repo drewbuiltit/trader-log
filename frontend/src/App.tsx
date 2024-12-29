@@ -1,13 +1,15 @@
 import React from 'react'
 import { Routes, Route } from 'react-router'
-import TradeForm from './components/TradeForm'
-import TradeList from './components/TradeList'
+import Trades from './pages/Trades'
+import TradeDetail from './pages/TradeDetail'
+import AddTrade from './pages/AddTrade'
 
 const App: React.FC = () => {
   return (
     <Routes>
-      <Route path="/" element={<TradeList />} />
-      <Route path="/add-trade" element={<TradeForm />} />
+      <Route path="/trades" element={<Trades />} />
+      <Route path="/trades/:id" element={<TradeDetail />} />
+      <Route path="/add-trade" element={<AddTrade />} />
     </Routes>
   )
 }

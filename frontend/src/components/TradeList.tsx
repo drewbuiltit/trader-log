@@ -1,49 +1,74 @@
-import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import React from 'react'
 
-const TradeList: React.FC = () => {
-  const [trades, setTrades] = useState([])
+interface Trade {
+  id: number;
+  symbol: string;
+  tradeDate: string;
+  type: string;
+  quantity: number;
+  price: number;
+}
 
-  useEffect(() => {
-    const fetchTrades = async () => {
-      try {
-        const response = await axios.get('http://localhost:8000/trades/')
-        setTrades(response.data)
-      } catch (error) {
-        console.error('Error fetching trades:', error)
-      }
-    }
+interface TradeListProps {
+  trades: Trade[];
+  onViewDetails: (id: number) => void;
+}
 
-    fetchTrades()
-  }, [])
-
+const TradeList: React.FC<TradeListProps> = ({ trades, onViewDetails }) => {
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <table className="w-full border-collapse border border-gray-200">
+    <div className="overflow-x-auto">
+      <table className="table">
         <thead>
         <tr>
-          <th className="border border-gray-200 p-2">Symbol</th>
-          <th className="border border-gray-200 p-2">Trade Date</th>
-          <th className="border border-gray-200 p-2">Buy/Sell</th>
-          <th className="border border-gray-200 p-2">Price</th>
-          <th className="border border-gray-200 p-2">Quantity</th>
-          <th className="border border-gray-200 p-2">Fees</th>
-          <th className="border border-gray-200 p-2">Comments</th>
+          <th>
+            <label>
+              <input type="checkbox" className="checkbox" />
+            </label>
+          </th>
+          <th>Symbol</th>
+          <th>Trade Date</th>
+          <th>Buy/Sell</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Comments</th>
         </tr>
         </thead>
         <tbody>
-        {trades.map((trade: any) => (
-          <tr key={trade.id}>
-            <td className="border border-gray-200 p-2">{trade.symbol}</td>
-            <td className="border border-gray-200 p-2">{trade.trade_date}</td>
-            <td className="border border-gray-200 p-2">{trade.buy_sell}</td>
-            <td className="border border-gray-200 p-2">{trade.entry_exit_price}</td>
-            <td className="border border-gray-200 p-2">{trade.quantity}</td>
-            <td className="border border-gray-200 p-2">{trade.fees}</td>
-            <td className="border border-gray-200 p-2">{trade.comments}</td>
-          </tr>
-        ))}
+        <tr>
+          <th>
+            <label>
+              <input type="checkbox" className="checkbox" />
+            </label>
+          </th>
+          <td>
+            TSLA
+          </td>
+          <td>
+            12/29/2024
+          </td>
+          <th>BUY</th>
+          <td>
+            $120.00
+          </td>
+          <td>
+            10,000
+          </td>
+          <td>
+            LEAP Play
+          </td>
+        </tr>
         </tbody>
+        <tfoot>
+        <tr>
+          <th></th>
+          <th>Symbol</th>
+          <th>Trade Date</th>
+          <th>Buy/Sell</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Comments</th>
+        </tr>
+        </tfoot>
       </table>
     </div>
   )
